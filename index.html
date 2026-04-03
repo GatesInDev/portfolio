@@ -3,79 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portfolio | Vitor</title>
-    <meta name="description" content="Development and UI/UX Portfolio">
+    <title>Vitor Altmann — Developer & Builder</title>
+    <meta name="description" content="Personal portfolio of Vitor Altmann — Full-Stack Developer & Infrastructure Enthusiast. Projects spanning .NET, Node.js, Vercel, MongoDB, and more.">
+    <meta name="author" content="Vitor Altmann">
+    <meta property="og:title" content="Vitor Altmann — Developer & Builder">
+    <meta property="og:description" content="Full-Stack Developer & Infrastructure Enthusiast building clean, modern digital experiences.">
+    <meta property="og:type" content="website">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
     <div id="app">
-        <nav class="app-nav">
+        <nav class="app-nav" role="navigation" aria-label="Main navigation">
             <div class="nav-content">
-                <a href="#home" class="nav-link active" data-target="home">Home</a>
-                <a href="#dotnet" class="nav-link" data-target="dotnet">.NET</a>
-                <a href="#other" class="nav-link" data-target="other">Languages</a>
-                <a href="#design" class="nav-link" data-target="design">Design</a>
+                <a href="#home"     id="nav-home"     class="nav-link active" data-target="home">Home</a>
+                <a href="#projects" id="nav-projects"  class="nav-link"        data-target="projects">Projects</a>
+                <a href="#contact"  id="nav-contact"   class="nav-link"        data-target="contact">Contact</a>
             </div>
         </nav>
 
-        <main id="main-content">
+        <main id="main-content" role="main">
             <!-- Dynamic Content Will Be Injected Here -->
         </main>
     </div>
 
-    <!-- Templates for Views -->
+    <!-- ═══════════════ TEMPLATES ═══════════════ -->
+
+    <!-- Home -->
     <template id="home-template">
-        <section class="view home-view">
+        <section class="view home-view" aria-label="Hero section">
+            <!-- Decorative triforce -->
+            <div class="triforce-deco" aria-hidden="true">
+                <svg viewBox="0 0 100 87" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <polygon points="50,2 98,86 2,86" stroke="currentColor" stroke-width="2" fill="none" opacity="0.18"/>
+                    <polygon points="50,2 74,44 26,44" fill="currentColor" opacity="0.12"/>
+                    <polygon points="26,44 50,86 2,86" fill="currentColor" opacity="0.12"/>
+                    <polygon points="74,44 98,86 50,86" fill="currentColor" opacity="0.12"/>
+                </svg>
+            </div>
+
             <div class="hero">
-                <h1 class="fade-in">Hi, I'm Vitor.</h1>
-                <p class="subtitle fade-in delay-1">.NET Developer & Back-End Enthusiast.</p>
-                <p class="description fade-in delay-2">Crafting clean, modern, and user-centric digital experiences.</p>
-                <div class="actions fade-in delay-3">
-                    <a href="#dotnet" class="btn primary">Projects</a>
-                    <a href="mailto:contato@vitoraltmann.dev" class="btn secondary">Email Me</a>
-                    <a href="https://github.com/GatesInDev" target="_blank" class="btn secondary icon-only" aria-label="GitHub">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
+                <div class="hero-eyebrow fade-in">✦ Welcome to my realm ✦</div>
+                <h1 class="fade-in delay-1">
+                    <span class="hero-name">Vitor<br>Altmann</span>
+                </h1>
+                <p class="subtitle fade-in delay-2">Full-Stack Developer &amp; Infrastructure Enthusiast</p>
+                <p class="description fade-in delay-3">Building robust backends, deploying on modern cloud infrastructure,<br>and crafting clean digital experiences.</p>
+                <div class="actions fade-in delay-4">
+                    <a href="#projects" id="cta-projects" class="btn primary">View Projects</a>
+                    <a href="#contact"  id="cta-contact"  class="btn secondary">Get in Touch</a>
+                    <a href="https://github.com/GatesInDev" target="_blank" rel="noopener noreferrer"
+                       id="cta-github" class="btn secondary icon-only" aria-label="GitHub profile">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                        </svg>
                     </a>
+                </div>
+
+                <!-- Skill badges -->
+                <div class="skill-badges fade-in delay-4">
+                    <span class="skill-badge">.NET / C#</span>
+                    <span class="skill-badge">Node.js</span>
+                    <span class="skill-badge">MongoDB</span>
+                    <span class="skill-badge">Vercel</span>
+                    <span class="skill-badge">SQL Server</span>
+                    <span class="skill-badge">REST APIs</span>
                 </div>
             </div>
         </section>
     </template>
 
+    <!-- Projects -->
     <template id="projects-template">
-        <section class="view projects-view">
+        <section class="view projects-view" aria-label="Projects section">
             <header class="section-header">
-                <h2 id="project-section-title">Development</h2>
-                <p id="project-section-subtitle">Selected coding projects.</p>
+                <div class="section-header-inner">
+                    <span class="section-rune" aria-hidden="true">◈</span>
+                    <div>
+                        <h2>Projects</h2>
+                        <p>A collection of things I've built across different technologies.</p>
+                    </div>
+                </div>
+                <!-- Filter chips -->
+                <div class="filter-chips" role="group" aria-label="Filter projects">
+                    <button id="filter-all"    class="filter-chip active" data-filter="all"    type="button">All</button>
+                    <button id="filter-dotnet" class="filter-chip"        data-filter="dotnet" type="button">.NET</button>
+                    <button id="filter-infra"  class="filter-chip"        data-filter="infra"  type="button">Infrastructure</button>
+                </div>
             </header>
-            <div class="project-grid" id="dev-grid">
-                <!-- Projects injected via JS -->
+            <div class="project-grid" id="dev-grid" aria-live="polite">
+                <!-- Cards injected via JS -->
             </div>
         </section>
     </template>
 
-    <template id="design-template">
-        <section class="view design-view">
+    <!-- Contact -->
+    <template id="contact-template">
+        <section class="view contact-view" aria-label="Contact section">
             <header class="section-header">
-                <h2>UI/UX Design</h2>
-                <p>Interfaces and experiences.</p>
+                <div class="section-header-inner">
+                    <span class="section-rune" aria-hidden="true">◈</span>
+                    <div>
+                        <h2>Contact</h2>
+                        <p>Let's build something together.</p>
+                    </div>
+                </div>
             </header>
-            <div class="project-grid design-grid" id="design-grid">
-                <!-- Designs injected via JS -->
+
+            <div class="contact-grid">
+                <a href="mailto:contato@vitoraltmann.dev" id="contact-email" class="contact-card">
+                    <div class="contact-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-label">Email</span>
+                        <span class="contact-value">contato@vitoraltmann.dev</span>
+                    </div>
+                    <svg class="contact-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+
+                <a href="https://github.com/GatesInDev" target="_blank" rel="noopener noreferrer" id="contact-github" class="contact-card">
+                    <div class="contact-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-label">GitHub</span>
+                        <span class="contact-value">GatesInDev</span>
+                    </div>
+                    <svg class="contact-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+
+                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" id="contact-linkedin" class="contact-card">
+                    <div class="contact-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+                            <rect x="2" y="9" width="4" height="12"/>
+                            <circle cx="4" cy="4" r="2"/>
+                        </svg>
+                    </div>
+                    <div class="contact-info">
+                        <span class="contact-label">LinkedIn</span>
+                        <span class="contact-value">Vitor Altmann</span>
+                    </div>
+                    <svg class="contact-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
             </div>
         </section>
     </template>
 
+    <!-- Detail -->
     <template id="detail-template">
-        <section class="view detail-view">
-            <button class="back-btn" onclick="history.back()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <section class="view detail-view" aria-label="Project detail">
+            <button class="back-btn" onclick="history.back()" id="detail-back-btn" aria-label="Go back">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
-                Back
+                Back to Projects
             </button>
             <div class="detail-content">
                 <!-- Detail content injected here -->
@@ -84,19 +181,25 @@
     </template>
 
     <!-- Lightbox Overlay -->
-    <div id="lightbox" class="lightbox hidden">
-        <button id="lightbox-close" class="lightbox-btn close" aria-label="Close">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    <div id="lightbox" class="lightbox hidden" role="dialog" aria-modal="true" aria-label="Image viewer">
+        <button id="lightbox-close" class="lightbox-btn close" aria-label="Close image viewer">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
         </button>
-        <button id="lightbox-prev" class="lightbox-btn prev" aria-label="Previous">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        <button id="lightbox-prev" class="lightbox-btn prev" aria-label="Previous image">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6"/>
+            </svg>
         </button>
-        <button id="lightbox-next" class="lightbox-btn next" aria-label="Next">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        <button id="lightbox-next" class="lightbox-btn next" aria-label="Next image">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
         </button>
         <div class="lightbox-content">
-            <img id="lightbox-img" src="" alt="Full screen view">
-            <div class="lightbox-caption"></div>
+            <img id="lightbox-img" src="" alt="Full screen project screenshot">
         </div>
     </div>
 

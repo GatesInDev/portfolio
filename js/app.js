@@ -1,21 +1,25 @@
-import { projects, designs } from './data.js';
-import { ParticleNetwork } from './particles.js'; // Import logic
+import { projects } from './data.js';
+import { ParticleNetwork } from './particles.js';
 
-const app = document.getElementById('app');
 const mainContent = document.getElementById('main-content');
 const navLinks = document.querySelectorAll('.nav-link');
 
 // Init Particles
 new ParticleNetwork('bg-canvas');
 
+// Active filter state
+let activeFilter = 'all';
+
 // Routing
 function handleRoute() {
     const hash = window.location.hash || '#home';
     const route = hash.slice(1);
     
-    // Update Nav
     navLinks.forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === hash);
+        const linkHash = link.getAttribute('href');
+        const isActive = linkHash === hash ||
+            (linkHash === '#projects' && route.startsWith('project/'));
+        link.classList.toggle('active', isActive);
     });
 
     renderView(route);
@@ -24,16 +28,9 @@ function handleRoute() {
 function renderView(route) {
     mainContent.innerHTML = '';
     
-    // Handle specific project details first
     if (route.startsWith('project/')) {
         const projectId = route.split('/')[1];
-        renderDetail(projectId, 'dev');
-        return;
-    }
-    
-    if (route.startsWith('design/')) {
-        const designId = route.split('/')[1];
-        renderDetail(designId, 'design');
+        renderDetail(projectId);
         return;
     }
 
@@ -41,14 +38,12 @@ function renderView(route) {
         case 'home':
             renderHome();
             break;
-        case 'dotnet':
-            renderProjects('dotnet');
+        case 'projects':
+            activeFilter = 'all';
+            renderProjects();
             break;
-        case 'other':
-            renderProjects('other');
-            break;
-        case 'design':
-            renderDesigns();
+        case 'contact':
+            renderContact();
             break;
         default:
             renderHome();
@@ -62,55 +57,78 @@ function renderHome() {
     mainContent.appendChild(clone);
 }
 
-function renderProjects(category) {
+function renderProjects() {
     const template = document.getElementById('projects-template');
     const clone = template.content.cloneNode(true);
+    const grid = clone.querySelector('#dev-grid');
+    const chips = clone.querySelectorAll('.filter-chip');
+
+    // Set active chip
+    chips.forEach(chip => {
+        chip.classList.toggle('active', chip.dataset.filter === activeFilter);
+        chip.addEventListener('click', () => {
+            activeFilter = chip.dataset.filter;
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            renderCards(grid);
+        });
+    });
+
+    renderCards(grid);
+    mainContent.appendChild(clone);
+}
+
+function renderCards(grid) {
+    grid.innerHTML = '';
+    const filtered = activeFilter === 'all'
+        ? projects
+        : projects.filter(p => p.category === activeFilter);
     
-    // Dynamic Header
-    const title = clone.querySelector('#project-section-title');
-    const subtitle = clone.querySelector('#project-section-subtitle');
-    
-    if (category === 'dotnet') {
-        title.textContent = '.NET Projects';
-        subtitle.textContent = 'Specialized in robust backend solutions.';
-    } else {
-        title.textContent = 'Other Languages';
-        subtitle.textContent = 'Full stack exploration.';
+    if (filtered.length === 0) {
+        grid.innerHTML = '<p class="empty-msg">No projects in this category yet. Stay tuned!</p>';
+        return;
     }
 
-    const grid = clone.querySelector('#dev-grid');
-    
-    // Filter projects
-    const filteredProjects = projects.filter(p => p.category === category);
-
-    filteredProjects.forEach(project => {
-        grid.appendChild(createCard(project, 'project'));
+    filtered.forEach((project, i) => {
+        const card = createCard(project);
+        card.style.animationDelay = `${i * 0.07}s`;
+        grid.appendChild(card);
     });
-    
-    mainContent.appendChild(clone);
 }
 
-function renderDesigns() {
-    const template = document.getElementById('design-template');
+function renderContact() {
+    const template = document.getElementById('contact-template');
     const clone = template.content.cloneNode(true);
-    const grid = clone.querySelector('#design-grid');
-    
-    designs.forEach(design => {
-        grid.appendChild(createCard(design, 'design'));
-    });
-    
     mainContent.appendChild(clone);
 }
 
-function createCard(item, type) {
+function createCard(item) {
     const div = document.createElement('div');
     div.className = 'card fade-in';
-    div.onclick = () => window.location.hash = `${type}/${item.id}`;
+    div.onclick = () => window.location.hash = `project/${item.id}`;
     
+    const categoryLabel = {
+        dotnet: '.NET',
+        infra: 'Infrastructure',
+        web: 'Web',
+        other: 'Other'
+    }[item.category] || item.category;
+
     div.innerHTML = `
-        <div class="card-image">
-            <img src="${item.image}" alt="${item.title}" loading="lazy">
-        </div>
+        ${item.image
+            ? `<div class="card-image">
+                <img src="${item.image}" alt="${item.title}" loading="lazy">
+                <span class="card-category-badge">${categoryLabel}</span>
+               </div>`
+            : `<div class="card-image card-image--placeholder">
+                <div class="card-placeholder-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span class="card-category-badge">${categoryLabel}</span>
+               </div>`
+        }
         <div class="card-content">
             <h3>${item.title}</h3>
             <p>${item.description}</p>
@@ -122,9 +140,8 @@ function createCard(item, type) {
     return div;
 }
 
-function renderDetail(id, type) {
-    const collection = type === 'dev' ? projects : designs;
-    const item = collection.find(p => p.id === id);
+function renderDetail(id) {
+    const item = projects.find(p => p.id === id);
     
     if (!item) {
         window.location.hash = '#home';
@@ -136,10 +153,11 @@ function renderDetail(id, type) {
     const content = clone.querySelector('.detail-content');
     
     content.innerHTML = `
+        ${item.image ? `
         <div class="detail-cover fade-in">
             <div class="detail-glow" style="background-image: url('${item.image}')"></div>
-            <img src="${item.image}" alt="${item.title}" class="detail-image" onclick="openLightbox('${item.id}', 0)"> <!-- Clickable cover too! -->
-        </div>
+            <img src="${item.image}" alt="${item.title}" class="detail-image" onclick="openLightbox('${item.id}', 0)">
+        </div>` : ''}
         
         <h2 class="fade-in delay-1">${item.title}</h2>
         
@@ -157,7 +175,7 @@ function renderDetail(id, type) {
             <div class="detail-section fade-in delay-2">
                 <h3>Key Features</h3>
                 <ul class="feature-list">
-                    ${item.features.map(feat => `<li>${feat}</li>`).join('')}
+                    ${item.features.map(feat => `<li><span class="feat-icon">◈</span>${feat}</li>`).join('')}
                 </ul>
             </div>
         ` : ''}
@@ -175,13 +193,12 @@ function renderDetail(id, type) {
         
         <div class="detail-links fade-in delay-3">
             ${item.repoUrl ? `<a href="${item.repoUrl}" target="_blank" class="btn primary">View Code</a>` : ''}
-            ${item.demoUrl ? `<a href="${item.demoUrl}" target="_blank" class="btn secondary">Live Demo</a>` : ''}
-            ${item.link ? `<a href="${item.link}" target="_blank" class="btn primary">View Design</a>` : ''}
+            ${item.demoUrl && item.demoUrl !== '#' ? `<a href="${item.demoUrl}" target="_blank" class="btn secondary">Live Demo</a>` : ''}
         </div>
     `;
     
     mainContent.appendChild(clone);
-    window.scrollTo(0,0);
+    window.scrollTo(0, 0);
 }
 
 // Lightbox Logic
@@ -191,16 +208,13 @@ const lightbox = document.getElementById('lightbox');
 const lightboxImg = document.getElementById('lightbox-img');
 
 window.openLightbox = (projectId, index) => {
-    // Find project logic
-    const allItems = [...projects, ...designs];
-    const project = allItems.find(p => p.id === projectId);
+    const project = projects.find(p => p.id === projectId);
     
     if (project && project.gallery) {
         currentGallery = project.gallery;
         currentIndex = index;
         updateLightboxImage();
         lightbox.classList.remove('hidden');
-        // Slight delay to allow display:flex to apply before opacity transition
         requestAnimationFrame(() => lightbox.classList.add('active'));
     }
 };
@@ -214,48 +228,34 @@ window.closeLightbox = () => {
     setTimeout(() => {
         lightbox.classList.add('hidden');
         lightboxImg.src = '';
-    }, 300); // Match transition duration
+    }, 300);
 };
 
 window.nextImage = (e) => {
-    if(e) e.stopPropagation();
+    if (e) e.stopPropagation();
     currentIndex = (currentIndex + 1) % currentGallery.length;
     updateLightboxImage();
 };
 
 window.prevImage = (e) => {
-    if(e) e.stopPropagation();
+    if (e) e.stopPropagation();
     currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
     updateLightboxImage();
 };
 
-// Lightbox Event Listeners
 document.getElementById('lightbox-close').addEventListener('click', window.closeLightbox);
 document.getElementById('lightbox-next').addEventListener('click', window.nextImage);
 document.getElementById('lightbox-prev').addEventListener('click', window.prevImage);
 
-// Close on background click
 lightbox.addEventListener('click', (e) => {
     if (e.target === lightbox) window.closeLightbox();
 });
 
-// Keyboard Navigation
 document.addEventListener('keydown', (e) => {
     if (!lightbox.classList.contains('active')) return;
-    
     if (e.key === 'Escape') window.closeLightbox();
     if (e.key === 'ArrowRight') window.nextImage();
     if (e.key === 'ArrowLeft') window.prevImage();
-});
-
-// Mouse Follow Effect
-document.addEventListener('mousemove', (e) => {
-    const x = e.clientX;
-    const y = e.clientY;
-    
-    // Update CSS variables on body
-    document.body.style.setProperty('--mouse-x', `${x}px`);
-    document.body.style.setProperty('--mouse-y', `${y}px`);
 });
 
 // Init
