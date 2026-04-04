@@ -110,6 +110,8 @@ function createCard(item) {
     const categoryLabel = {
         dotnet: '.NET',
         infra: 'Infrastructure',
+        java: 'Java',
+        linux: 'Linux',
         web: 'Web',
         other: 'Other'
     }[item.category] || item.category;
