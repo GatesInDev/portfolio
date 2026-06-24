@@ -6,6 +6,32 @@
 
 export const projects = [
 
+    // ── Featured / Personal ───────────────────────
+
+    {
+        id: 'teyvat-archive',
+        title: 'Teyvat Archive',
+        description: 'A fan-made interactive archive for Genshin Impact world data, characters, and lore — deployed live on Vercel.',
+        fullDescription: 'Teyvat Archive is a personal passion project and interactive archive dedicated to the world of Genshin Impact. Built as a full-stack web application, it aggregates game data and presents it through a clean, immersive interface designed to match the aesthetic of the game world. A showcase of web development applied to a personal interest — combining data architecture, UX thinking, and a thoughtful visual experience.',
+        tags: ['TypeScript', 'Vite', 'Web App', 'Genshin Impact', 'Fan Project'],
+        category: 'web',
+        image:  '../img/Genshin/2.png',
+        gallery: [
+            '../img/Genshin/1.png',
+             '../img/Genshin/2.png',
+        ],
+        features: [
+            'Interactive archive of Genshin Impact game data',
+            'Immersive interface inspired by the game aesthetic',
+            'Structured data architecture for large game datasets',
+            'Deployed on Vercel with custom subdomain',
+            'Responsive design for all devices'
+        ],
+        repoUrl: null,
+        demoUrl: 'https://teyvat.vitoraltmann.dev',
+        featured: true
+    },
+
     // ── .NET / C# ────────────────────────────────
 
     {
@@ -35,7 +61,8 @@ export const projects = [
             'Persistence layer with Entity Framework Core and SQL Server'
         ],
         repoUrl: 'https://github.com/GatesInDev/PDV',
-        demoUrl: null
+        demoUrl: null,
+        featured: true
     },
 
     {
@@ -106,7 +133,7 @@ export const projects = [
         id: 'hyrule-compendium',
         title: 'Hyrule Compendium',
         description: 'A TypeScript web app and Python scraper that aggregates and displays Zelda compendium data. Live on Vercel.',
-        fullDescription: 'HyruleCompendium is a full-stack web project combining a TypeScript frontend with a Python data scraper that collects compendium entries from the Zelda universe. The application is deployed on Vercel at hyrule-compendium-zeta.vercel.app and serves as a living encyclopedia of Hyrule creatures, items, and equipment. A personal passion project that also demonstrates multi-language development, API integration, and static deployment capabilities.',
+        fullDescription: 'HyruleCompendium is a full-stack web project combining a TypeScript frontend with a Python data scraper that collects compendium entries from the Zelda universe. The application is deployed on Vercel at hyrule.vitoraltmann.dev and serves as a living encyclopedia of Hyrule creatures, items, and equipment. A personal passion project that also demonstrates multi-language development, API integration, and static deployment capabilities.',
         tags: ['TypeScript', 'Python', 'Vercel', 'Web App', 'Zelda', 'Scraping'],
         category: 'infra',
         image: null,
@@ -119,7 +146,8 @@ export const projects = [
             'Responsive web design with CSS'
         ],
         repoUrl: 'https://github.com/GatesInDev/HyruleCompendium',
-        demoUrl: 'https://hyrule.vitoraltmann.dev'
+        demoUrl: 'https://hyrule.vitoraltmann.dev',
+        featured: true
     },
 
     // ── Java ─────────────────────────────────────
