@@ -4,6 +4,22 @@
 // ══════════════════════════════════════════════════
 
 export const posts = [
+    {
+        id: 'comparativa-escalonadores-linux',
+        title: 'Análise Comparativa de Escalonadores de Processos em Sistemas Operacionais para Servidores Críticos: CentOS, RHEL e Slackware',
+        date: '2026-08-19',
+        excerpt: 'A eficiência de um servidor crítico em ambientes corporativos depende diretamente da capacidade do seu SO em gerenciar recursos de hardware. O coração deste gerenciamento é o escalonador de processos (scheduler)...',
+        tags: ['Linux', 'Escalonadores', 'Sistemas Operacionais', 'RHEL', 'CentOS', 'Slackware'],
+        type: 'pdf',
+        pdfUrl: 'pdfs/comparativa-escalonadores-linux.pdf',
+        metadata: {
+            author: 'Vitor Hugo Altmann',
+            university: 'Universidade Comunitária da Região de Chapecó (Unochapecó)',
+            location: 'Chapecó, Santa Catarina, Brasil',
+            abstract: 'A eficiência de um servidor crítico em ambientes corporativos depende diretamente da capacidade do seu Sistema Operacional em gerenciar os recursos de hardware. O coração deste gerenciamento é o escalonador de processos (scheduler), responsável por distribuir o tempo de CPU entre as tarefas de forma justa e otimizada. Este artigo apresenta uma análise profunda dos mecanismos de escalonamento presentes em três distribuições Linux consolidadas em servidores point release: Red Hat Enterprise Linux (RHEL), CentOS e Slackware. Discutimos o funcionamento de baixo nível do Completely Fair Scheduler (CFS), sua interação com arquiteturas de hardware modernas, os requisitos mínimos e os cenários ideais de uso para cada sistema.'
+        },
+        content: ''
+    },
 
     {
         id: 'iniciando-com-angular-e-nestjs',

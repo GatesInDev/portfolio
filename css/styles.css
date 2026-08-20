@@ -1475,6 +1475,53 @@ h1 {
 .post-body ol  { padding-left: 1.5em; margin-bottom: 20px; }
 .post-body li  { margin-bottom: 6px; }
 
+/* ── PDF Articles ── */
+.pdf-metadata {
+    margin-top: 32px;
+    color: var(--text-muted);
+    line-height: 1.85;
+    font-size: 1rem;
+    background: rgba(116, 122, 71, 0.05);
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    padding: 24px;
+}
+.pdf-metadata .metadata-item {
+    margin-bottom: 8px;
+}
+.pdf-metadata .metadata-item strong {
+    color: var(--text-color);
+    font-weight: 600;
+}
+.pdf-metadata .abstract-title {
+    font-family: var(--font-heading);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--accent-amber-glow);
+    margin: 28px 0 12px;
+    letter-spacing: 0.05em;
+}
+.pdf-metadata .abstract-text {
+    margin-bottom: 24px;
+    text-align: justify;
+    text-wrap: pretty;
+}
+.pdf-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 32px;
+}
+@media (max-width: 600px) {
+    .pdf-actions {
+        flex-direction: column;
+    }
+    .pdf-actions .btn {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+}
+
 /* ═══════════════════════════════════════════════════
    AUDIO / AUDIOPHILE
    ═══════════════════════════════════════════════════ */

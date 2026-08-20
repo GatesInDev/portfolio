@@ -385,7 +385,7 @@ function createPostCard(post) {
         <div class="tags">
             ${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}
         </div>
-        <span class="post-read-more">Ler mais →</span>
+        <span class="post-read-more">${post.type === 'pdf' ? 'Acessar PDF →' : 'Ler mais →'}</span>
     `;
     return div;
 }
@@ -404,14 +404,41 @@ function renderBlogPost(id) {
         year: 'numeric', month: 'long', day: 'numeric'
     });
 
-    content.innerHTML = `
-        <time class="post-date fade-in">${dateFormatted}</time>
-        <h2 class="fade-in delay-1">${post.title}</h2>
-        <div class="tags fade-in delay-1">
-            ${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-        <div class="post-body fade-in delay-2">${post.content}</div>
-    `;
+    let contentHtml = '';
+    
+    if (post.type === 'pdf') {
+        contentHtml = `
+            <time class="post-date fade-in">${dateFormatted}</time>
+            <h2 class="fade-in delay-1">${post.title}</h2>
+            <div class="tags fade-in delay-1">
+                ${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+            <div class="pdf-metadata fade-in delay-2">
+                <div class="metadata-item"><strong>Autor:</strong> ${post.metadata.author}</div>
+                <div class="metadata-item"><strong>Instituição:</strong> ${post.metadata.university}</div>
+                <div class="metadata-item"><strong>Local:</strong> ${post.metadata.location}</div>
+                
+                <h3 class="abstract-title">Resumo</h3>
+                <p class="abstract-text">${post.metadata.abstract}</p>
+                
+                <div class="pdf-actions">
+                    <a href="${post.pdfUrl}" class="btn primary" download>Baixar PDF</a>
+                    <a href="${post.pdfUrl}" class="btn secondary" target="_blank">Abrir no Navegador</a>
+                </div>
+            </div>
+        `;
+    } else {
+        contentHtml = `
+            <time class="post-date fade-in">${dateFormatted}</time>
+            <h2 class="fade-in delay-1">${post.title}</h2>
+            <div class="tags fade-in delay-1">
+                ${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+            </div>
+            <div class="post-body fade-in delay-2">${post.content}</div>
+        `;
+    }
+
+    content.innerHTML = contentHtml;
 
     mainContent.appendChild(clone);
     window.scrollTo(0, 0);
