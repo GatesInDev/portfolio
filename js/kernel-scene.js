@@ -39,24 +39,33 @@ for(let i=0;i<12;i++){
 const tasks=[];
 for(let i=0;i<12;i++){const m=new T.Mesh(new T.BoxGeometry(.35,.35,.35),new T.MeshBasicMaterial({color:0x91b59a,transparent:true,opacity:.55}));scene.add(m);tasks.push(m);}
 let pointer={x:0,y:0},depth=0,frame=0;
+let paused=false, elapsed=0, boost=0;
+const controls=document.createElement('div');controls.className='scene-controls';
+const pause=document.createElement('button');pause.type='button';pause.textContent='Pausar cenário';pause.setAttribute('aria-pressed','false');
+const pulseButton=document.createElement('button');pulseButton.type='button';pulseButton.textContent='Pulso';pulseButton.setAttribute('aria-label','Enviar pulso pela cena do kernel');
+controls.append(pulseButton,pause);document.body.append(controls);
+pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Retomar cenário':'Pausar cenário';pause.setAttribute('aria-pressed',String(paused));last=performance.now();wake();});
+pulseButton.addEventListener('click',()=>{if(!reduced.matches){boost=3;wake();}});
+addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){pointer.x=e.clientX/innerWidth-.5;pointer.y=e.clientY/innerHeight-.5;wake();}},{passive:true});
+addEventListener('pointerout',e=>{if(!e.relatedTarget){pointer.x=0;pointer.y=0;}},{passive:true});
 function route(){const h=location.hash;depth=h.includes('project')?12:h.includes('article')||h.includes('post')?26:h.includes('contact')?38:0;}
 function resize(){renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();}
 addEventListener('pointermove',e=>{if(e.pointerType==='mouse'){pointer.x=e.clientX/innerWidth-.5;pointer.y=e.clientY/innerHeight-.5;}},{passive:true});
 addEventListener('hashchange',route);addEventListener('resize',resize);
 camera.position.set(0,0,18);route();resize();
 let last=0;
-function animate(now){frame=0;if(document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;const t=reduced.matches?0:now/1000;
+function animate(now){frame=0;if(document.hidden)return;const dt=Math.min((now-last)/1000,.05);last=now;if(!paused&&!reduced.matches){elapsed+=dt*(1+boost);boost=Math.max(0,boost-dt*1.5);}const t=reduced.matches?0:elapsed;
  const z=18-depth-Math.min(scrollY*.008,12);const blend=reduced.matches?1:1-Math.exp(-dt*3);
  camera.position.lerp(new T.Vector3(reduced.matches?0:pointer.x*2,reduced.matches?0:-pointer.y*1.3,z),blend);
  camera.lookAt(0,0,camera.position.z-24);
  pulses.forEach((p,i)=>p.position.copy(paths[i].getPoint((t*.075+i/12)%1)));
  tasks.forEach((m,i)=>{m.position.set(-7+((i+t*.7)%12)*.5,-3.5,-10-depth*.5);m.rotation.y=t*.3;});
  pages.forEach((m,i)=>{m.material.opacity=.15+(Math.sin(t*1.2+i*.5)+1)*.12;});
- renderer.render(scene,camera);if(!reduced.matches)frame=requestAnimationFrame(animate);
+ renderer.render(scene,camera);if(!reduced.matches&&!paused)frame=requestAnimationFrame(animate);
 }
 function wake(){if(!frame&&!document.hidden)frame=requestAnimationFrame(animate);}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else wake();});
 addEventListener('scroll',wake,{passive:true});addEventListener('hashchange',wake);addEventListener('resize',wake);reduced.addEventListener('change',wake);
-renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);renderer.domElement.remove();document.body.classList.remove('has-kernel-scene');});
+renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);renderer.domElement.remove();controls.remove();document.body.classList.remove('has-kernel-scene');});
 document.body.classList.add('has-kernel-scene');wake();
 } catch(error) { console.info('Using Canvas kernel backdrop.',error.message); }

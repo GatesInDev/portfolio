@@ -1656,3 +1656,8 @@ body { isolation: isolate; }
 .kernel-scene { position:fixed; inset:0; width:100%; height:100%; z-index:-2; pointer-events:none; opacity:.65; }
 .has-kernel-scene #kernel-background { visibility:hidden; }
 @media(max-width:600px){.kernel-scene{opacity:.4;}}
+.scene-controls { position:fixed; right:20px; bottom:max(18px, env(safe-area-inset-bottom)); z-index:900; display:flex; gap:6px; padding:5px; background:var(--bg-deep); border:1px solid var(--border-card); border-radius:12px; }
+.scene-controls button { min-height:44px; padding:8px 12px; border:0; border-radius:8px; background:transparent; color:var(--text-muted); font:inherit; font-size:.75rem; cursor:pointer; touch-action:manipulation; }
+.scene-controls button:hover,.scene-controls button[aria-pressed="true"] { background:var(--surface-hover); color:var(--text-color); }
+#main-content { padding-bottom:100px; }
+@media(max-width:600px){.scene-controls { right:12px; bottom:max(10px, env(safe-area-inset-bottom)); }.scene-controls button{font-size:.7rem;padding-inline:10px;}}

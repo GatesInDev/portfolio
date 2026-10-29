@@ -460,7 +460,7 @@ function renderBlogPost(id) {
 // ── Init ───────────────────────────────────────────────
 
 window.addEventListener('hashchange', () => handleRoute());
-window.addEventListener('DOMContentLoaded', async () => {
+async function initializePortfolio() {
     handleRoute();
     try { await loadArticles(); } catch {
         const notice = document.createElement('p');
@@ -477,7 +477,12 @@ window.addEventListener('DOMContentLoaded', async () => {
     if (/^#(articles|article\/|blog|post\/)/.test(window.location.hash)) {
         handleRoute({ resetScroll: false });
     }
-});
+}
 
-
-import "./kernel-scene.js";
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePortfolio, { once: true });
+} else {
+    initializePortfolio();
+}
+// The optional GPU scene must never delay the initial content.
+import('./kernel-scene.js').catch(error => console.info('Scene unavailable:', error.message));
