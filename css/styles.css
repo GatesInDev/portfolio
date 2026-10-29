@@ -1629,3 +1629,27 @@ img { max-width: 100%; }
     .carousel-ctas { flex-wrap: wrap; }
 }
 @media (prefers-reduced-motion: reduce) { .view { animation: none; } }
+
+/* Source-code backdrop stays outside document flow and never captures input. */
+#kernel-background, .kernel-background-shade {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    user-select: none;
+}
+#kernel-background { z-index: -2; opacity: .26; }
+.kernel-background-shade {
+    z-index: -1;
+    background: linear-gradient(90deg, rgba(16,21,18,.32), rgba(16,21,18,.9) 30%, rgba(16,21,18,.78) 65%, rgba(16,21,18,.25)),
+        linear-gradient(0deg, var(--bg-color), transparent 24%, transparent 78%, var(--bg-color));
+}
+body { isolation: isolate; }
+@media (max-width: 600px) {
+    #kernel-background { opacity: .18; }
+    .kernel-background-shade {
+        background: linear-gradient(90deg, rgba(16,21,18,.55), rgba(16,21,18,.85) 45%, rgba(16,21,18,.5)),
+            linear-gradient(0deg, var(--bg-color), transparent 22%, transparent 80%, var(--bg-color));
+    }
+}

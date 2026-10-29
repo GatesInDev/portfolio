@@ -1,3 +1,4 @@
+import './kernel-background.js';
 import { projects } from './data.js';
 import { posts, loadArticles } from './posts.js';
 
