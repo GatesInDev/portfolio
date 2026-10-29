@@ -18,7 +18,7 @@ const CATEGORY_LABEL = {
 
 // ── Routing ────────────────────────────────────────────
 
-function handleRoute() {
+function handleRoute({ resetScroll = true } = {}) {
     if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; }
 
     const hash = window.location.hash || '#home';
@@ -33,6 +33,8 @@ function handleRoute() {
     });
 
     renderView(route);
+    // Route changes start at the top without animating the previous page's scroll.
+    if (resetScroll) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 }
 
 function renderView(route) {
@@ -296,7 +298,7 @@ function renderDetail(id) {
     `;
 
     mainContent.appendChild(clone);
-    window.scrollTo(0, 0);
+
 }
 
 // ── Lightbox ───────────────────────────────────────────
@@ -451,12 +453,12 @@ function renderBlogPost(id) {
     content.innerHTML = contentHtml;
 
     mainContent.appendChild(clone);
-    window.scrollTo(0, 0);
+
 }
 
 // ── Init ───────────────────────────────────────────────
 
-window.addEventListener('hashchange', handleRoute);
+window.addEventListener('hashchange', () => handleRoute());
 window.addEventListener('DOMContentLoaded', async () => {
     handleRoute();
     try { await loadArticles(); } catch {
@@ -470,6 +472,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         window.articleCatalogNotice = notice;
     }
     catalogLoading = false;
-    handleRoute();
+    // Background discovery must not restart a project carousel or move the page.
+    if (/^#(articles|article\/|blog|post\/)/.test(window.location.hash)) {
+        handleRoute({ resetScroll: false });
+    }
 });
 

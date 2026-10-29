@@ -1578,3 +1578,54 @@ h1 { font-size: clamp(3.5rem, 10vw, 6.5rem); letter-spacing: -.06em; line-height
     *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
     .fade-in, .hero-eyebrow { opacity: 1; }
 }
+
+/* Keep the viewport and navigation stable across short and long routes. */
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    scroll-behavior: auto;
+}
+body { min-height: 100svh; }
+#app { width: 100%; min-width: 0; }
+.app-nav {
+    inset: max(16px, env(safe-area-inset-top)) 0 auto;
+    margin-inline: auto;
+    width: min(440px, calc(100% - 32px));
+    height: auto;
+    transform: none;
+    overflow: visible;
+}
+.nav-content { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.nav-link {
+    min-width: 0;
+    text-align: center;
+    padding: 10px 8px;
+    white-space: nowrap;
+    font-size: .875rem;
+}
+#main-content { min-width: 0; padding-top: calc(112px + env(safe-area-inset-top)); overflow-anchor: none; }
+.view { animation: routeEnter .18s ease-out both; }
+@keyframes routeEnter { from { opacity: .25; } to { opacity: 1; } }
+.card, .post-card, .contact-card, .hero, .contact-info { min-width: 0; }
+.contact-value, .post-card h3, .post-content h2, .detail-content h2 { overflow-wrap: anywhere; }
+.project-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.post-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+img { max-width: 100%; }
+.filter-chips { overscroll-behavior-x: contain; }
+.nav-link, .filter-chip, .back-btn, .btn { min-height: 44px; touch-action: manipulation; }
+@media (max-width: 600px) {
+    .app-nav { width: calc(100% - 24px); padding: 5px; }
+    .nav-link { padding: 10px 4px; font-size: .8rem; }
+    #main-content { padding-inline: 16px; padding-bottom: max(32px, env(safe-area-inset-bottom)); }
+    .home-view { min-height: calc(100svh - 160px); }
+    h1 { font-size: clamp(3rem, 15vw, 4.5rem); }
+    .hero-eyebrow { letter-spacing: .08em; }
+    .description { font-size: 1rem; }
+    .post-card { padding: 22px; }
+    .post-content h2 { font-size: clamp(1.45rem, 6vw, 2rem); }
+    .pdf-metadata { padding: 20px; }
+    .pdf-actions { flex-direction: column; align-items: stretch; }
+    .pdf-actions .btn { justify-content: center; }
+    .carousel-ctas { flex-wrap: wrap; }
+}
+@media (prefers-reduced-motion: reduce) { .view { animation: none; } }
