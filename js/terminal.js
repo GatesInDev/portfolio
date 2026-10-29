@@ -3,8 +3,8 @@ import { posts } from './posts.js';
 const commands=['help','ls','pwd','cd','cat','head','tail','grep','find','tree','wc','sort','uniq','echo','printf','clear','history','export-history','whoami','hostname','uname','date','uptime','env','printenv','which','file','stat','open','man','exit'];
 const root='/home/gates/portfolio';let cwd=root,previous=root,index=0,history=[],started=Date.now();
 try{history=JSON.parse(sessionStorage.getItem('bash_history')||'[]');if(!Array.isArray(history))history=[];}catch{}index=history.length;
-const terminal=document.createElement('section');terminal.className='activity-terminal';terminal.setAttribute('aria-label','Terminal simulado do portfólio');
-terminal.innerHTML='<header><button type="button" class="terminal-toggle">Full Bash</button><span>gates@portfolio · simulação</span></header><div class="terminal-log" role="log" aria-live="polite" aria-relevant="additions"></div><form><label for="portfolio-search">$</label><input id="portfolio-search" autocomplete="off" spellcheck="false" aria-label="Comando do terminal" placeholder="help · Tab completa · ↑ histórico"><button type="submit" aria-label="Executar comando">↵</button></form>';
+const terminal=document.createElement('section');terminal.className='activity-terminal';terminal.setAttribute('aria-label','Terminal do portfólio');
+terminal.innerHTML='<header><span>gates@portfolio</span><button type="button" class="terminal-toggle" aria-label="Expandir terminal" title="Expandir terminal" aria-expanded="false"><svg class="icon-expand" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg><svg class="icon-collapse" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M3 8h5V3m8 0v5h5M8 21v-5H3m18 0h-5v5"/></svg></button></header><div class="terminal-log" role="log" aria-live="polite" aria-relevant="additions"></div><form><label for="portfolio-search">$</label><input id="portfolio-search" autocomplete="off" spellcheck="false" aria-label="Comando do terminal" placeholder="help · Tab completa · ↑ histórico"><button type="submit" aria-label="Executar comando">↵</button></form>';
 document.body.append(terminal);const log=terminal.querySelector('.terminal-log'),input=terminal.querySelector('input');
 function write(text){const pre=document.createElement('pre');pre.textContent=String(text);log.append(pre);while(log.children.length>150)log.firstChild.remove();log.scrollTop=log.scrollHeight;}
 function save(line){history.push(line);history=history.slice(-500);index=history.length;try{sessionStorage.setItem('bash_history',JSON.stringify(history));}catch{}}
@@ -17,11 +17,11 @@ function read(path,files){const p=resolve(path);if(!(p in files))throw Error('Ar
 function navigate(path){if(path===root)location.hash='home';else if(path===root+'/projetos')location.hash='projects';else if(path===root+'/artigos')location.hash='articles';else if(path.startsWith(root+'/projetos/'))location.hash='project/'+path.split('/')[5];else if(path.startsWith(root+'/artigos/'))location.hash='article/'+path.split('/')[5];}
 function run(args,stream=null){const [cmd,...a]=args;const files=fs(),directories=dirs(files);const paths=a.filter(x=>!x.startsWith('-'));const content=()=>paths.length?paths.map(p=>read(p,files)).join('\n'):stream??'';
  switch(cmd){
- case 'help':case 'man':return 'Shell simulado: comandos operam apenas no conteúdo do portfólio.\n'+commands.join('  ')+'\nPipelines: cat README.md | grep -i linux | head -n 5\nTab: completar; ↑/↓: histórico; Ctrl+L: limpar; Ctrl+C: cancelar.\nhead/tail -n N; grep -i -n -v; ls -a; history -c.\nopen artigo.pdf abre o documento. export-history baixa o histórico.\nSem execução de programas, rede ou escrita em arquivos reais.';
+ case 'help':case 'man':return 'Comandos do portfólio:\n'+commands.join('  ')+'\nPipelines: cat README.md | grep -i linux | head -n 5\nTab: completar; ↑/↓: histórico; Ctrl+L: limpar; Ctrl+C: cancelar.\nhead/tail -n N; grep -i -n -v; ls -a; history -c.\nopen artigo.pdf abre o documento. export-history baixa o histórico.';
  case 'pwd':return cwd;case 'whoami':return 'gates';case 'hostname':return 'portfolio';case 'uname':return 'Portfolio Bash Simulator (browser)';case 'date':return new Date().toLocaleString('pt-BR');case 'uptime':return Math.floor((Date.now()-started)/1000)+' segundos';
  case 'env':case 'printenv':return 'HOME=/home/gates\nPWD='+cwd+'\nSHELL=portfolio-simulator';case 'which':return a.map(c=>commands.includes(c)?'/usr/bin/'+c:c+': não encontrado').join('\n');
  case 'echo':return a.join(' ');case 'printf':return a.join(' ').replace(/\\n/g,'\n');
- case 'clear':log.replaceChildren();return '';case 'exit':terminal.classList.remove('full-bash');return 'Modo compacto.';
+ case 'clear':log.replaceChildren();return '';case 'exit':setExpanded(false);return 'Modo compacto.';
  case 'history':if(a[0]==='-c'){history=[];try{sessionStorage.removeItem('bash_history');}catch{}return 'Histórico limpo.';}return history.map((s,i)=>String(i+1).padStart(4)+'  '+s).join('\n');case 'export-history':download();return 'Histórico exportado.';
  case 'cd':{const p=a[0]==='-'?previous:resolve(a[0]||'~');if(!directories.has(p))throw Error('Diretório não encontrado: '+p);previous=cwd;cwd=p;navigate(p);return '';}
  case 'ls':{const p=resolve(paths[0]||'.');if(files[p]!==undefined)return p.split('/').pop();if(!directories.has(p))throw Error('Diretório não encontrado');const prefix=p==='/'?'/':p+'/';return [...new Set([...Object.keys(files),...directories].filter(f=>f.startsWith(prefix)).map(f=>f.slice(prefix.length).split('/')[0]))].filter(f=>f&&(a.includes('-a')||!f.startsWith('.'))).sort().join('  ');}
@@ -33,7 +33,7 @@ function run(args,stream=null){const [cmd,...a]=args;const files=fs(),directorie
  case 'open':{const p=resolve(a[0]||'.');if(p.endsWith('.pdf')){const value=read(p,files).replace(/^PDF: /,'');const link=document.createElement('a');link.href=value;link.target='_blank';link.rel='noopener';link.textContent='Abrir PDF ↗';log.append(link);link.click();return value;}if(!directories.has(p)&&!(p in files))throw Error('Caminho não encontrado');navigate(p);return 'Abrindo '+p;}
  default:throw Error('Comando não suportado: '+cmd+'. Digite help.');}}
 function execute(line){if(!line.trim())return;save(line);write(cwd.replace('/home/gates','~')+' $ '+line);try{const ts=tokens(line),stages=[[]];for(const t of ts){if(t==='|')stages.push([]);else stages.at(-1).push(t);}let out=null;for(const stage of stages){if(!stage.length)throw Error('Pipeline incompleto');out=run(stage,out);}if(out)write(out);}catch(e){write('bash: '+e.message);}}
-terminal.querySelector('form').addEventListener('submit',e=>{e.preventDefault();execute(input.value);input.value='';});terminal.querySelector('.terminal-toggle').onclick=()=>{terminal.classList.toggle('full-bash');input.focus();};
+terminal.querySelector('form').addEventListener('submit',e=>{e.preventDefault();execute(input.value);input.value='';});terminal.querySelector('.terminal-toggle').onclick=()=>{setExpanded(!terminal.classList.contains('full-bash'));};
 input.addEventListener('keydown',e=>{if(e.key==='ArrowUp'||e.key==='ArrowDown'){e.preventDefault();index=Math.max(0,Math.min(history.length,index+(e.key==='ArrowUp'?-1:1)));input.value=history[index]||'';}if(e.key==='Tab'){e.preventDefault();const text=input.value, cursor=input.selectionStart, before=text.slice(0,cursor), word=before.split(/\s/).at(-1);
 const f=fs(),d=dirs(f);let choices;
 if(!before.includes(' ')){choices=commands.filter(c=>c.startsWith(word));}
@@ -47,6 +47,14 @@ else {
 }
 if(choices.length===1){const value=choices[0];input.value=before.slice(0,before.length-word.length)+value+(value.endsWith('/')?'':' ')+text.slice(cursor);input.setSelectionRange(before.length-word.length+value.length+(value.endsWith('/')?0:1),before.length-word.length+value.length+(value.endsWith('/')?0:1));}
 else if(choices.length)write(choices.join('  '));}if(e.ctrlKey&&e.key==='l'){e.preventDefault();log.replaceChildren();}if(e.ctrlKey&&e.key==='c'){e.preventDefault();input.value='';write('^C');}});
-addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'&&document.activeElement!==input){e.preventDefault();input.value='grep -i ';input.focus();}if(e.key==='Escape')terminal.classList.remove('full-bash');});
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='f'&&document.activeElement!==input){e.preventDefault();input.value='grep -i ';input.focus();}if(e.key==='Escape')setExpanded(false);});
 addEventListener('hashchange',()=>{const h=location.hash.slice(1),path=h==='projects'?root+'/projetos':h==='articles'?root+'/artigos':h.startsWith('project/')?root+'/projetos/'+h.split('/')[1]:h.startsWith('article/')?root+'/artigos/'+h.split('/')[1]:root;cwd=path;const command='cd '+cwd.replace('/home/gates','~');save(command);write('$ '+command);});
-write('Portfolio Bash · shell simulado\nDigite help. Histórico disponível em ~/.bash_history.');
+write('Digite help. Histórico disponível em ~/.bash_history.');
+
+function setExpanded(expanded) {
+    terminal.classList.toggle('full-bash',expanded);
+    const button=terminal.querySelector('.terminal-toggle');
+    const label=expanded?'Minimizar terminal':'Expandir terminal';
+    button.setAttribute('aria-expanded',String(expanded));
+    button.setAttribute('aria-label',label);button.title=label;
+}

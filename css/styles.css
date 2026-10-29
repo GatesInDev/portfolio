@@ -1684,3 +1684,29 @@ body { isolation: isolate; }
  .route-home #main-content { padding-bottom:190px; }
  .route-home .hero { padding-block:16px; }
 }
+/* Shared numeric geometry allows expansion and collapse to interpolate smoothly. */
+.activity-terminal {
+    inset:auto 20px max(16px, env(safe-area-inset-bottom)) auto;
+    width:min(380px,calc(100% - 40px)); height:192px;
+    display:flex;flex-direction:column;
+    transition:width .36s cubic-bezier(.22,1,.36,1),height .36s cubic-bezier(.22,1,.36,1),border-radius .36s ease,background-color .36s ease;
+}
+.activity-terminal.full-bash {
+    inset:auto 20px max(16px, env(safe-area-inset-bottom)) auto;
+    width:calc(100% - 40px);height:calc(100dvh - 110px);border-radius:16px;
+}
+.activity-terminal header{flex:none;padding:4px 10px 4px 14px;}
+.activity-terminal .terminal-log{flex:1;min-height:0;max-height:none;padding:8px 14px;}
+.activity-terminal form{flex:none;}
+.activity-terminal .terminal-toggle{display:grid;place-items:center;min-width:36px;min-height:36px;border-radius:7px;}
+.terminal-toggle:hover{background:var(--surface-hover);}
+.terminal-toggle .icon-collapse{display:none;}
+.full-bash .terminal-toggle .icon-expand{display:none;}
+.full-bash .terminal-toggle .icon-collapse{display:block;}
+@media(max-width:600px){
+    .activity-terminal,.activity-terminal.full-bash{inset:auto 12px max(8px, env(safe-area-inset-bottom)) auto;width:calc(100% - 24px);}
+    .activity-terminal{height:158px;}
+    .activity-terminal.full-bash{height:calc(100dvh - 100px);}
+    .activity-terminal .terminal-toggle{min-width:44px;min-height:44px;}
+}
+@media(prefers-reduced-motion:reduce){.activity-terminal{transition:none;}}
