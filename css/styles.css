@@ -1674,3 +1674,13 @@ body { isolation: isolate; }
 #main-content{padding-bottom:240px;}
 @media(max-width:600px){.activity-terminal{right:12px;bottom:max(8px,env(safe-area-inset-bottom));width:calc(100% - 24px);}.terminal-log{max-height:54px;}.terminal-results{max-height:160px;}}
 .activity-terminal header{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;gap:8px;font-size:10px;user-select:none;}.activity-terminal header button{font:inherit;font-size:11px;padding:5px;}.terminal-log pre{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:5px 0;}.terminal-log a{color:var(--accent-sage-light);}.activity-terminal.full-bash{inset:90px 24px 24px;width:auto;display:flex;flex-direction:column;background:rgba(8,16,11,.98);}.full-bash .terminal-log{max-height:none;flex:1;overflow:auto;padding:18px;}.full-bash input{font-size:14px;}.project-readme pre{white-space:pre-wrap;overflow-wrap:anywhere;user-select:text;line-height:1.7;padding:20px;background:var(--bg-deep);border-radius:12px;}.project-readme{margin-top:30px;}@media(max-width:600px){.activity-terminal.full-bash{inset:84px 8px 8px;}.activity-terminal input{font-size:16px;}}
+/* Home uses the viewport rather than the article/terminal bottom spacing. */
+.route-home #main-content { min-height:100svh; padding-bottom:24px; display:flex; align-items:center; }
+.route-home .home-view { min-height:0; }
+.activity-terminal input { border-radius:6px; padding:6px 8px; }
+.activity-terminal input:focus-visible { outline:1px solid var(--accent-sage-light); outline-offset:-1px; background:var(--surface-color); }
+/* On narrow/short screens reserve room for the compact terminal without clipping text. */
+@media(max-width:600px), (max-height:700px){
+ .route-home #main-content { padding-bottom:190px; }
+ .route-home .hero { padding-block:16px; }
+}

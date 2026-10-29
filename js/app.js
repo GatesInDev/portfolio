@@ -33,6 +33,7 @@ function handleRoute({ resetScroll = true } = {}) {
         link.classList.toggle('active', isActive);
     });
 
+    document.body.classList.toggle('route-home', route === 'home');
     renderView(route);
     // Route changes start at the top without animating the previous page's scroll.
     if (resetScroll) window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
