@@ -1,13 +1,12 @@
 import { projects } from './data.js';
-import { posts } from './posts.js';
-import { headphones, vinyls, audioPreferences } from './audio.js';
-import { ParticleNetwork } from './particles.js';
+import { posts, loadArticles } from './posts.js';
 
 const mainContent = document.getElementById('main-content');
 const navLinks = document.querySelectorAll('.nav-link');
 
-new ParticleNetwork('bg-canvas');
 
+
+let catalogLoading = true;
 let activeFilter = 'all';
 let carouselTimer = null;
 const featuredProjects = projects.filter(p => p.featured);
@@ -23,13 +22,13 @@ function handleRoute() {
     if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; }
 
     const hash = window.location.hash || '#home';
-    const route = hash.slice(1);
+    const route = hash.slice(1).replace(/^blog$/, 'articles').replace(/^post\//, 'article/');
 
     navLinks.forEach(link => {
         const linkHash = link.getAttribute('href');
-        const isActive = linkHash === hash ||
+        const isActive = linkHash === `#${route}` ||
             (linkHash === '#projects' && route.startsWith('project/')) ||
-            (linkHash === '#blog' && route.startsWith('post/'));
+            (linkHash === '#articles' && route.startsWith('article/'));
         link.classList.toggle('active', isActive);
     });
 
@@ -43,7 +42,7 @@ function renderView(route) {
         renderDetail(route.split('/')[1]);
         return;
     }
-    if (route.startsWith('post/')) {
+    if (route.startsWith('article/')) {
         renderBlogPost(route.split('/')[1]);
         return;
     }
@@ -51,8 +50,7 @@ function renderView(route) {
     switch (route) {
         case 'home':     renderHome();     break;
         case 'projects': activeFilter = 'all'; renderProjects(); break;
-        case 'blog':     renderBlog();     break;
-        case 'audio':    renderAudio();    break;
+        case 'articles':     renderBlog();     break;
         case 'contact':  renderContact();  break;
         default:         renderHome();
     }
@@ -353,11 +351,11 @@ document.addEventListener('keydown', e => {
 // ── Blog ───────────────────────────────────────────────
 
 function renderBlog() {
-    const clone = document.getElementById('blog-template').content.cloneNode(true);
+    const clone = document.getElementById('articles-template').content.cloneNode(true);
     const grid  = clone.querySelector('#post-grid');
 
     if (posts.length === 0) {
-        grid.innerHTML = '<p class="empty-msg">Nenhum post ainda. Em breve!</p>';
+        grid.innerHTML = '<p class="empty-msg">Nenhum artigo publicado ainda.</p>';
     } else {
         posts.forEach((post, i) => {
             const card = createPostCard(post);
@@ -367,16 +365,21 @@ function renderBlog() {
     }
 
     mainContent.appendChild(clone);
+    if (window.articleCatalogNotice) mainContent.appendChild(window.articleCatalogNotice.cloneNode(true));
 }
 
 function createPostCard(post) {
     const div  = document.createElement('div');
     div.className = 'post-card fade-in';
-    div.onclick   = () => window.location.hash = `post/${post.id}`;
+    const open = () => window.location.hash = `article/${post.id}`;
+    div.onclick = open;
+    div.tabIndex = 0;
+    div.setAttribute('role', 'link');
+    div.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
 
-    const dateFormatted = new Date(post.date + 'T12:00:00').toLocaleDateString('pt-BR', {
+    const dateFormatted = post.date ? new Date(post.date + 'T12:00:00').toLocaleDateString('pt-BR', {
         year: 'numeric', month: 'long', day: 'numeric'
-    });
+    }) : 'Artigo em PDF';
 
     div.innerHTML = `
         <time class="post-date">${dateFormatted}</time>
@@ -392,17 +395,24 @@ function createPostCard(post) {
 
 function renderBlogPost(id) {
     const post = posts.find(p => p.id === id);
-    if (!post) { window.location.hash = 'blog'; return; }
+    if (!post && catalogLoading) {
+        mainContent.innerHTML = '<p class="empty-msg" role="status">Carregando artigo…</p>';
+        return;
+    }
+    if (!post) {
+        mainContent.innerHTML = '<p class="empty-msg">Artigo não encontrado. <a href="#articles">Ver artigos</a></p>';
+        return;
+    }
 
-    const clone   = document.getElementById('blog-post-template').content.cloneNode(true);
+    const clone   = document.getElementById('articles-post-template').content.cloneNode(true);
     const content = clone.querySelector('.post-content');
-    const backBtn = clone.querySelector('#blog-post-back-btn');
+    const backBtn = clone.querySelector('#articles-post-back-btn');
 
-    backBtn.onclick = () => { window.location.hash = 'blog'; };
+    backBtn.onclick = () => { window.location.hash = 'articles'; };
 
-    const dateFormatted = new Date(post.date + 'T12:00:00').toLocaleDateString('pt-BR', {
+    const dateFormatted = post.date ? new Date(post.date + 'T12:00:00').toLocaleDateString('pt-BR', {
         year: 'numeric', month: 'long', day: 'numeric'
-    });
+    }) : 'Artigo em PDF';
 
     let contentHtml = '';
     
@@ -444,214 +454,22 @@ function renderBlogPost(id) {
     window.scrollTo(0, 0);
 }
 
-// ── Audio ──────────────────────────────────────────────
-
-function renderAudio() {
-    const clone = document.getElementById('audio-template').content.cloneNode(true);
-
-    buildHeadphonesSection(clone.querySelector('#hp-grid'));
-    buildVinylSection(clone.querySelector('#vinyl-grid'));
-    buildPreferencesSection(clone.querySelector('#audio-pref-content'));
-
-    mainContent.appendChild(clone);
-}
-
-function buildHeadphonesSection(container) {
-    if (headphones.length === 0) {
-        container.innerHTML = '<p class="empty-msg">Coleção sendo catalogada — em breve aqui.</p>';
-        return;
-    }
-    headphones.forEach((hp, i) => {
-        const card = createHeadphoneCard(hp);
-        card.style.animationDelay = `${i * 0.07}s`;
-        container.appendChild(card);
-    });
-}
-
-function createHeadphoneCard(hp) {
-    const div = document.createElement('div');
-    div.className = 'hp-card fade-in';
-
-    const statusLabels = { owned: 'Tenho', sold: 'Vendi', wishlist: 'Wishlist' };
-    const statusClass  = `hp-status--${hp.status || 'owned'}`;
-    const statusLabel  = statusLabels[hp.status] || hp.status;
-
-    div.innerHTML = `
-        ${hp.image ? `
-            <div class="hp-card-image">
-                <img src="${hp.image}" alt="${hp.name}" loading="lazy">
-            </div>
-        ` : ''}
-        <div class="hp-card-header">
-            <span class="hp-name">${hp.name}</span>
-            <span class="hp-status ${statusClass}">${statusLabel}</span>
-        </div>
-        <div class="hp-meta">
-            ${hp.type      ? `<span class="hp-meta-pill">${hp.type}</span>` : ''}
-            ${hp.driver    ? `<span class="hp-meta-pill">${hp.driver}</span>` : ''}
-            ${hp.signature ? `<span class="hp-signature-badge">${hp.signature}</span>` : ''}
-        </div>
-        ${hp.notes ? `<p class="hp-notes">${hp.notes}</p>` : ''}
-        ${hp.squigUrl ? `
-            <button class="squig-link" type="button"
-                    data-squig-url="${hp.squigUrl}"
-                    data-hp-name="${hp.name}">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-                </svg>
-                Ver squig
-            </button>
-        ` : ''}
-    `;
-
-    const squigBtn = div.querySelector('.squig-link');
-    if (squigBtn) {
-        squigBtn.addEventListener('click', e => {
-            e.stopPropagation();
-            openSquigModal(squigBtn.dataset.squigUrl, squigBtn.dataset.hpName, squigBtn);
-        });
-    }
-
-    return div;
-}
-
-function buildVinylSection(container) {
-    if (vinyls.length === 0) {
-        container.innerHTML = '<p class="empty-msg">Discoteca sendo catalogada — em breve aqui.</p>';
-        return;
-    }
-    vinyls.forEach((vinyl, i) => {
-        const card = createVinylCard(vinyl);
-        card.style.animationDelay = `${i * 0.07}s`;
-        container.appendChild(card);
-    });
-}
-
-function createVinylCard(vinyl) {
-    const div = document.createElement('div');
-    div.className = 'vinyl-card fade-in';
-
-    div.innerHTML = `
-        <div class="vinyl-art">
-            ${vinyl.image
-                ? `<img src="${vinyl.image}" alt="${vinyl.album}" loading="lazy">`
-                : `<svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg>`
-            }
-        </div>
-        <div class="vinyl-info">
-            <div class="vinyl-album">${vinyl.album}</div>
-            <div class="vinyl-artist">${vinyl.artist}</div>
-            <div class="vinyl-meta">
-                ${vinyl.year  ? `<span class="vinyl-year">${vinyl.year}</span>` : ''}
-                ${vinyl.genre ? `<span class="vinyl-genre">${vinyl.genre}</span>` : ''}
-            </div>
-        </div>
-    `;
-    return div;
-}
-
-function buildPreferencesSection(container) {
-    const { targetCurve, signatures, notes, squigs } = audioPreferences;
-    const hasPrefs  = targetCurve || signatures.length || notes;
-    const hasSquigs = squigs && squigs.length;
-
-    if (!hasPrefs && !hasSquigs) {
-        container.innerHTML = '<p class="empty-msg">Preferências sendo documentadas — em breve aqui.</p>';
-        return;
-    }
-
-    if (hasPrefs) {
-        const block = document.createElement('div');
-        block.className = 'audio-pref-block fade-in';
-        block.innerHTML = `
-            ${targetCurve ? `
-                <div class="audio-pref-row">
-                    <span class="audio-pref-label">Curva alvo</span>
-                    <span class="audio-pref-value">${targetCurve}</span>
-                </div>
-            ` : ''}
-            ${signatures.length ? `
-                <div class="audio-pref-row">
-                    <span class="audio-pref-label">Assinaturas preferidas</span>
-                    <div class="audio-sig-list">
-                        ${signatures.map(s => `<span class="tag">${s}</span>`).join('')}
-                    </div>
-                </div>
-            ` : ''}
-            ${notes ? `
-                <div class="audio-pref-row">
-                    <span class="audio-pref-label">Notas</span>
-                    <p class="hp-notes">${notes}</p>
-                </div>
-            ` : ''}
-        `;
-        container.appendChild(block);
-    }
-
-    if (hasSquigs) {
-        squigs.forEach((squig, i) => {
-            const card = document.createElement('div');
-            card.className = 'squig-embed-card fade-in';
-            card.style.animationDelay = `${i * 0.1}s`;
-            card.innerHTML = `
-                <div class="squig-embed-header">
-                    <span class="squig-embed-label">${squig.label}</span>
-                    <a href="${squig.url}" target="_blank" rel="noopener noreferrer"
-                       class="btn secondary squig-external-btn">Abrir no site ↗</a>
-                </div>
-                <div class="squig-embed-body">
-                    <iframe src="${squig.url}" title="${squig.label}" loading="lazy"></iframe>
-                </div>
-                ${squig.description ? `<p class="squig-embed-desc">${squig.description}</p>` : ''}
-            `;
-            container.appendChild(card);
-        });
-    }
-}
-
-// ── Squig Modal ────────────────────────────────────────
-
-const squigModal  = document.getElementById('squig-modal');
-const squigIframe = document.getElementById('squig-iframe');
-
-function openSquigModal(url, name, triggerEl) {
-    const inner = squigModal.querySelector('.squig-modal-inner');
-
-    // Animate origin from the trigger button's screen position
-    if (triggerEl) {
-        const r  = triggerEl.getBoundingClientRect();
-        const vw = window.innerWidth;
-        const vh = window.innerHeight;
-        inner.style.transformOrigin =
-            `${((r.left + r.width  / 2) / vw * 100).toFixed(1)}% ` +
-            `${((r.top  + r.height / 2) / vh * 100).toFixed(1)}%`;
-    } else {
-        inner.style.transformOrigin = '50% 50%';
-    }
-
-    squigIframe.src = url;
-    document.getElementById('squig-modal-title').textContent    = name;
-    document.getElementById('squig-modal-external').href        = url;
-    squigModal.classList.remove('hidden');
-    requestAnimationFrame(() => squigModal.classList.add('active'));
-}
-
-function closeSquigModal() {
-    squigModal.classList.remove('active');
-    setTimeout(() => {
-        squigModal.classList.add('hidden');
-        squigIframe.src = 'about:blank';
-    }, 320);
-}
-
-document.getElementById('squig-modal-close').addEventListener('click', closeSquigModal);
-squigModal.addEventListener('click', e => { if (e.target === squigModal) closeSquigModal(); });
-
-document.addEventListener('keydown', e => {
-    if (e.key === 'Escape' && squigModal.classList.contains('active')) closeSquigModal();
-});
-
 // ── Init ───────────────────────────────────────────────
 
 window.addEventListener('hashchange', handleRoute);
-window.addEventListener('DOMContentLoaded', handleRoute);
+window.addEventListener('DOMContentLoaded', async () => {
+    handleRoute();
+    try { await loadArticles(); } catch {
+        const notice = document.createElement('p');
+        notice.className = 'catalog-notice';
+        notice.textContent = 'Não foi possível atualizar o catálogo. Tente recarregar a página ou consulte os PDFs no GitHub.';
+        const link = document.createElement('a');
+        link.href = 'https://github.com/GatesInDev/portfolio/tree/master/pdfs';
+        link.textContent = ' Ver artigos no GitHub';
+        notice.appendChild(link);
+        window.articleCatalogNotice = notice;
+    }
+    catalogLoading = false;
+    handleRoute();
+});
+

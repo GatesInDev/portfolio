@@ -81,10 +81,10 @@ All colors and tokens live as CSS variables in `css/styles.css` at the `:root` b
 --text-secondary: #9a9a8a;
 ```
 
-**Aesthetic:** Zelda-inspired — sage green + amber gold on near-black. Glassmorphism on nav and overlays. Triforce SVG decoration. Rune pulse animations.
+**Aesthetic:** Professional, restrained dark layout with sage green accents, clear typography and accessible focus states. No audio section, particles or fantasy decorations.
 
 **Fonts:**
-- Headings: `Cinzel` (Google Fonts — serif, ceremonial)
+- Headings: `Outfit` (Google Fonts — modern, readable)
 - Body: `Outfit` (Google Fonts — modern, readable)
 
 Do not add new color values directly to selectors. Always use or extend the CSS variable set.
@@ -196,3 +196,8 @@ Commit style from history: `feat: <description>` (conventional commits, lowercas
 
 **Debug particles:**  
 → `js/particles.js` is fully self-contained. It instantiates `ParticleNetwork` on the `#particle-canvas` element. Check canvas sizing and `devicePixelRatio` handling if display issues arise on HiDPI screens.
+
+
+## Articles
+
+See README.md for the article publication flow. PDF files directly under `pdfs/` are discovered through the public GitHub API, with local fallback metadata in `js/posts.js`. Do not reintroduce removed Angular or Accounting posts. Current article routes: `#articles` and `#article/<id>`. Audio and particle modules are removed.
