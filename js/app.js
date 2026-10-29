@@ -479,3 +479,5 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
 });
 
+
+import "./kernel-scene.js";
