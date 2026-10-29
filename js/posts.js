@@ -4,6 +4,7 @@
 // ══════════════════════════════════════════════════
 
 export const posts = [
+{"id": "analise-desempenho-threads", "title": "Análise de Desempenho: Processamento Concorrente de IDs utilizando POSIX e Win32 Threads", "date": "2026-10-29", "excerpt": "Análise de processamento sequencial e concorrente em C, com threads nativas, mutexes e diferentes escalas de carga. Inclui nota técnica de reprodutibilidade.", "tags": ["C", "POSIX", "Win32", "Threads", "Concorrência"], "type": "pdf", "pdfUrl": "pdfs/analise_desempenho_threads.pdf", "supplementUrl": "pdfs/notas/nota_tecnica_threads.pdf", "metadata": {"author": "Vitor Hugo Altmann", "university": "Unochapecó — Ciência da Computação", "location": "Chapecó, SC, Brasil", "abstract": "Desenvolvimento e análise de desempenho de um sistema orquestrador multiprocesso e multithread para consumir IDs, simular enriquecimento de dados e gravar resultados com sincronização. A nota técnica complementar detalha a geração de cargas e a reprodutibilidade dos experimentos."}},
     {
         id: 'comparativa-escalonadores-linux',
         title: 'Análise Comparativa de Escalonadores de Processos em Sistemas Operacionais para Servidores Críticos: CentOS, RHEL e Slackware',

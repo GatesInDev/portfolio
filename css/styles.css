@@ -1661,3 +1661,15 @@ body { isolation: isolate; }
 .scene-controls button:hover,.scene-controls button[aria-pressed="true"] { background:var(--surface-hover); color:var(--text-color); }
 #main-content { padding-bottom:100px; }
 @media(max-width:600px){.scene-controls { right:12px; bottom:max(10px, env(safe-area-inset-bottom)); }.scene-controls button{font-size:.7rem;padding-inline:10px;}}
+.app-nav,.btn,.filter-chips,.card,.post-card,.contact-card,.back-btn,.activity-terminal summary { user-select:none; -webkit-user-select:none; }
+.post-body,.post-content,.detail-desc,input,textarea,.terminal-log,.terminal-results { user-select:text; -webkit-user-select:text; }
+.activity-terminal { position:fixed; bottom:16px; right:20px; z-index:900; width:min(380px,calc(100% - 32px)); background:rgba(12,18,14,.96); border:1px solid var(--border-subtle); border-radius:12px; font:12px/1.6 ui-monospace,monospace; color:var(--text-muted); overflow:hidden; }
+.activity-terminal summary { padding:10px 14px; cursor:pointer; color:var(--accent-sage-light); }.activity-terminal summary span{float:right;color:var(--text-dim);font-size:10px;}
+.terminal-log{padding:0 14px 8px;max-height:90px;overflow:auto;overflow-wrap:anywhere;}
+.activity-terminal form{display:flex;align-items:center;gap:8px;border-top:1px solid var(--border-card);padding:6px 12px;}
+.activity-terminal input{min-width:0;flex:1;background:transparent;border:0;color:var(--text-color);font:inherit;min-height:36px;}
+.activity-terminal button{background:transparent;color:var(--accent-sage-light);border:0;min-width:36px;min-height:36px;cursor:pointer;}
+.terminal-results{max-height:220px;overflow:auto;}.terminal-results a{display:block;padding:9px 14px;color:var(--text-color);text-decoration:none;border-top:1px solid var(--border-card);}.terminal-results a:hover{background:var(--surface-hover);}.terminal-results p{padding:12px;}
+.article-supplement{margin:24px 0;padding-top:20px;border-top:1px solid var(--border-card);}.article-supplement p{margin:8px 0 14px;}
+#main-content{padding-bottom:240px;}
+@media(max-width:600px){.activity-terminal{right:12px;bottom:max(8px,env(safe-area-inset-bottom));width:calc(100% - 24px);}.terminal-log{max-height:54px;}.terminal-results{max-height:160px;}}

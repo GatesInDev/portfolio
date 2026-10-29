@@ -434,6 +434,7 @@ function renderBlogPost(id) {
                 <h3 class="abstract-title">Resumo</h3>
                 <p class="abstract-text">${post.metadata.abstract}</p>
                 
+                ${post.supplementUrl ? `<div class="article-supplement"><h3>Nota técnica complementar</h3><p>Reprodutibilidade e geração de carga de testes.</p><a href="${post.supplementUrl}" target="_blank" rel="noopener noreferrer" class="btn secondary">Ler nota técnica ↗</a></div>` : ''}
                 <div class="pdf-actions">
                     <a href="${post.pdfUrl}" class="btn primary" download>Baixar PDF</a>
                     <a href="${post.pdfUrl}" class="btn secondary" target="_blank">Abrir no Navegador</a>
@@ -486,3 +487,5 @@ if (document.readyState === 'loading') {
 }
 // The optional GPU scene must never delay the initial content.
 import('./kernel-scene.js').catch(error => console.info('Scene unavailable:', error.message));
+
+import './terminal.js';

@@ -40,12 +40,6 @@ const tasks=[];
 for(let i=0;i<12;i++){const m=new T.Mesh(new T.BoxGeometry(.35,.35,.35),new T.MeshBasicMaterial({color:0x91b59a,transparent:true,opacity:.55}));scene.add(m);tasks.push(m);}
 let pointer={x:0,y:0},depth=0,frame=0;
 let paused=false, elapsed=0, boost=0;
-const controls=document.createElement('div');controls.className='scene-controls';
-const pause=document.createElement('button');pause.type='button';pause.textContent='Pausar cenário';pause.setAttribute('aria-pressed','false');
-const pulseButton=document.createElement('button');pulseButton.type='button';pulseButton.textContent='Pulso';pulseButton.setAttribute('aria-label','Enviar pulso pela cena do kernel');
-controls.append(pulseButton,pause);document.body.append(controls);
-pause.addEventListener('click',()=>{paused=!paused;pause.textContent=paused?'Retomar cenário':'Pausar cenário';pause.setAttribute('aria-pressed',String(paused));last=performance.now();wake();});
-pulseButton.addEventListener('click',()=>{if(!reduced.matches){boost=3;wake();}});
 addEventListener('pointerdown',e=>{if(e.pointerType==='touch'){pointer.x=e.clientX/innerWidth-.5;pointer.y=e.clientY/innerHeight-.5;wake();}},{passive:true});
 addEventListener('pointerout',e=>{if(!e.relatedTarget){pointer.x=0;pointer.y=0;}},{passive:true});
 function route(){const h=location.hash;depth=h.includes('project')?12:h.includes('article')||h.includes('post')?26:h.includes('contact')?38:0;}
@@ -66,6 +60,6 @@ function animate(now){frame=0;if(document.hidden)return;const dt=Math.min((now-l
 function wake(){if(!frame&&!document.hidden)frame=requestAnimationFrame(animate);}
 document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(frame);frame=0;}else wake();});
 addEventListener('scroll',wake,{passive:true});addEventListener('hashchange',wake);addEventListener('resize',wake);reduced.addEventListener('change',wake);
-renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);renderer.domElement.remove();controls.remove();document.body.classList.remove('has-kernel-scene');});
+renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();cancelAnimationFrame(frame);renderer.domElement.remove();document.body.classList.remove('has-kernel-scene');});
 document.body.classList.add('has-kernel-scene');wake();
 } catch(error) { console.info('Using Canvas kernel backdrop.',error.message); }
