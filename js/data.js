@@ -235,3 +235,15 @@ export const projects = [
 ];
 
 export const designs = [];
+
+
+export async function syncProjects() {
+    const response = await fetch('./js/github-projects.json');
+    if (!response.ok) return;
+    const catalog = await response.json();
+    if (!Array.isArray(catalog)) return;
+    for (const item of catalog) {
+        const index = projects.findIndex(p => p.repoUrl?.toLowerCase() === item.repoUrl?.toLowerCase());
+        if (index >= 0) projects[index] = item; else projects.push(item);
+    }
+}

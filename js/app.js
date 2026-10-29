@@ -1,5 +1,5 @@
 import './kernel-background.js';
-import { projects } from './data.js';
+import { projects, syncProjects } from './data.js';
 import { posts, loadArticles } from './posts.js';
 
 const mainContent = document.getElementById('main-content');
@@ -298,6 +298,12 @@ function renderDetail(id) {
         </div>
     `;
 
+    if (item.readme) {
+        const section = document.createElement('section');section.className='project-readme';
+        const heading = document.createElement('h3');heading.textContent='README';
+        const body=document.createElement('pre');body.textContent=item.readme;
+        section.append(heading,body);content.append(section);
+    }
     mainContent.appendChild(clone);
 
 }
@@ -463,6 +469,7 @@ function renderBlogPost(id) {
 window.addEventListener('hashchange', () => handleRoute());
 async function initializePortfolio() {
     handleRoute();
+    syncProjects().then(() => { if (location.hash.startsWith('#project')) handleRoute({ resetScroll: false }); }).catch(() => {});
     try { await loadArticles(); } catch {
         const notice = document.createElement('p');
         notice.className = 'catalog-notice';

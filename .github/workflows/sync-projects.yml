@@ -1,0 +1,32 @@
+name: Sync portfolio projects
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+  push:
+    paths: ['scripts/sync-projects.py', '.github/workflows/sync-projects.yml']
+permissions:
+  contents: write
+concurrency:
+  group: portfolio-sync
+  cancel-in-progress: false
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/sync-projects.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Commit catalog
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add js/github-projects.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: synchronize GitHub project catalog'
+            git push
+          fi
