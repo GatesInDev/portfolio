@@ -4,7 +4,7 @@ on:
     - cron: '23 */6 * * *'
   workflow_dispatch:
   push:
-    paths: ['scripts/sync-projects.py', '.github/workflows/sync-projects.yml']
+    paths: ['scripts/sync-projects.py', 'scripts/project-repositories.json', '.github/workflows/sync-projects.yml']
 permissions:
   contents: write
 concurrency:
@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - run: python -m unittest discover -s tests -v
       - run: python scripts/sync-projects.py
         env:
           GH_TOKEN: ${{ github.token }}

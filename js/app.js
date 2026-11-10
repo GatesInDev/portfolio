@@ -10,7 +10,7 @@ const navLinks = document.querySelectorAll('.nav-link');
 let catalogLoading = true;
 let activeFilter = 'all';
 let carouselTimer = null;
-const featuredProjects = projects.filter(p => p.featured);
+
 
 const CATEGORY_LABEL = {
     dotnet: '.NET', infra: 'Infrastructure', java: 'Java',
@@ -68,6 +68,7 @@ function renderHome() {
 }
 
 function renderProjects() {
+    const featuredProjects = projects.filter(p => p.featured);
     const clone = document.getElementById('projects-template').content.cloneNode(true);
     const grid   = clone.querySelector('#dev-grid');
     const chips  = clone.querySelectorAll('.filter-chip');

@@ -26,9 +26,15 @@ A origem e o hash do blob estão em `js/kernel-source.js`. Esse trecho mantém o
 
 ## Sincronização de projetos do GitHub
 
-Adicione o tópico `portfolio` aos repositórios públicos que deseja exibir. Mantenha o `README.md` na localização reconhecida pelo GitHub e imagens em `.portfolio/`, com `cover.webp` (ou PNG/JPG) como capa. Os demais arquivos dessa pasta compõem a galeria. O campo Website fornece o link de demonstração.
+Selecione repositórios públicos pelo tópico `portfolio` ou pela lista versionada em `scripts/project-repositories.json`. A seleção inicial da lista é PDV e Vetor ERP. Repositórios privados ou arquivados são ignorados.
 
-O workflow **Sync portfolio projects** gera `js/github-projects.json` a cada seis horas, ou manualmente em Actions → Run workflow. Os projetos anteriores permanecem disponíveis; um repositório sincronizado substitui a entrada antiga com a mesma URL. Erros da API interrompem a geração, preservando o catálogo anterior. Nenhum token vai ao navegador. O README é apresentado como texto Markdown selecionável, preservando o conteúdo original; não executa HTML incorporado.
+Em cada repositório, mantenha `README.md` na raiz e as imagens diretamente em `.portfolio/`. Use `.portfolio/project.json` para definir `title`, `description`, `fullDescription`, `tags`, `category`, `featured`, `features`, `cover` e `gallery`. `cover` e `gallery` são nomes de imagens nessa pasta, não URLs. Formatos aceitos: WebP, PNG, JPG, JPEG e GIF. A capa é incluída como primeira imagem da galeria.
+
+O campo opcional `demoUrl` aceita HTTPS; `null` oculta a demonstração (por exemplo, enquanto um deploy estiver pausado). Sem esse campo, é usado o Website do GitHub. Sem metadados próprios, a descrição vem do About do repositório. O README é exibido como texto Markdown selecionável, sem executar HTML.
+
+O workflow **Sync portfolio projects** gera `js/github-projects.json` a cada seis horas, ou manualmente em Actions → Run workflow. Erros da API, metadados inválidos ou imagens ausentes preservam o catálogo anterior. Nenhum token vai ao navegador. A sincronização preserva o ID das entradas antigas e mantém seus textos/imagens quando a fonte não fornece substitutos; categorias, destaques e funcionalidades só são substituídos quando declarados no manifesto.
+
+As capturas do PDV são históricas, reaproveitadas do catálogo anterior. As do Vetor ERP mostram a aplicação local com dados fictícios. A origem de cada conjunto está no README da respectiva pasta `.portfolio/`.
 
 ## Full Bash
 

@@ -244,6 +244,16 @@ export async function syncProjects() {
     if (!Array.isArray(catalog)) return;
     for (const item of catalog) {
         const index = projects.findIndex(p => p.repoUrl?.toLowerCase() === item.repoUrl?.toLowerCase());
-        if (index >= 0) projects[index] = item; else projects.push(item);
+        if (index >= 0) {
+            const previous = projects[index];
+            const merged = { ...previous, ...item, id: previous.id };
+            for (const field of ['title', 'description', 'fullDescription', 'image', 'readme']) {
+                if (!item[field]) merged[field] = previous[field];
+            }
+            for (const field of ['gallery', 'tags']) {
+                if (!item[field]?.length) merged[field] = previous[field];
+            }
+            projects[index] = merged;
+        } else projects.push({ category: 'other', ...item });
     }
 }
