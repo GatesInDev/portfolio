@@ -52,7 +52,8 @@ def build_project(repo):
     description = meta.get('description', repo.get('description')) or ''
     project = dict(id=repo['name'], title=text(meta.get('title', repo['name'])),
                    description=text(description), fullDescription=text(meta.get('fullDescription', description)),
-                   readme=readme, tags=[text(repo['language'])] if repo.get('language') else [],
+                   readme=readme, readmeUrl=doc.get('html_url') if doc else None,
+                   readmeRawUrl=doc.get('download_url') if doc else None, tags=[text(repo['language'])] if repo.get('language') else [],
                    image=images.get(cover, ''), gallery=[images[name] for name in ordered],
                    repoUrl=repo['html_url'])
     for field in ('tags', 'features'):

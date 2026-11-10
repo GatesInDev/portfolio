@@ -35,7 +35,9 @@
       "Auditoria de alterações no DbContext"
     ],
     "category": "dotnet",
-    "featured": true
+    "featured": true,
+    "readmeUrl": "https://github.com/GatesInDev/PDV/blob/master/README.md",
+    "readmeRawUrl": "https://raw.githubusercontent.com/GatesInDev/PDV/master/README.md"
   },
   {
     "id": "vetor-erp",
@@ -70,6 +72,8 @@
     ],
     "category": "web",
     "featured": true,
-    "demoUrl": null
+    "demoUrl": null,
+    "readmeUrl": "https://github.com/GatesInDev/vetor-erp/blob/master/README.md",
+    "readmeRawUrl": "https://raw.githubusercontent.com/GatesInDev/vetor-erp/master/README.md"
   }
 ]

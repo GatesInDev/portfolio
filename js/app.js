@@ -1,4 +1,5 @@
 import './kernel-background.js';
+import { renderReadme } from './readme.js';
 import { projects, syncProjects } from './data.js';
 import { posts, loadArticles } from './posts.js';
 
@@ -301,10 +302,7 @@ function renderDetail(id) {
     `;
 
     if (item.readme) {
-        const section = document.createElement('section');section.className='project-readme';
-        const heading = document.createElement('h3');heading.textContent='README';
-        const body=document.createElement('pre');body.textContent=item.readme;
-        section.append(heading,body);content.append(section);
+        content.append(renderReadme(item));
     }
     mainContent.appendChild(clone);
 
